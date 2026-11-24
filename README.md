@@ -1,6 +1,8 @@
 # API de Loja: Projeto Final (API REST completa)
 
-> 🌐 **Deploy:** _link do Render será adicionado aqui após a publicação_ · 📘 **Swagger em produção:** `<deploy>/api-docs` · 🩺 **Health:** `<deploy>/health`
+> 🌐 **Deploy:** https://api-rest-projeto-final.onrender.com · 📘 **Swagger em produção:** https://api-rest-projeto-final.onrender.com/api-docs · 🩺 **Health:** https://api-rest-projeto-final.onrender.com/health
+>
+> _Plano gratuito: se a API estiver "dormindo", a primeira requisição pode levar cerca de 1 minuto._
 
 [![CI](https://github.com/marciowsz/api-rest-projeto-final/actions/workflows/ci.yml/badge.svg)](https://github.com/marciowsz/api-rest-projeto-final/actions/workflows/ci.yml)
 
@@ -153,7 +155,7 @@ O repositório já vem com o [`render.yaml`](render.yaml) (*Blueprint*):
 3. Informe a `ADMIN_SENHA` quando o Render pedir. O `JWT_SECRET` é gerado automaticamente.
 4. Clique em **Apply**. O Render roda `npm ci`, sobe com `npm start` e monitora o `/health`.
 
-Depois do deploy, o **Swagger fica acessível em produção** em `https://<seu-app>.onrender.com/api-docs`, e o **Authorize** funciona do mesmo jeito.
+O **Swagger está acessível em produção** em https://api-rest-projeto-final.onrender.com/api-docs, e o **Authorize** funciona do mesmo jeito.
 
 > **Antes da apresentação:** o plano gratuito "dorme" após 15 minutos sem uso, e a primeira requisição pode levar cerca de 1 minuto. Faça o aquecimento abrindo `/health` alguns minutos antes. O banco SQLite é recriado a cada reinício, com os 150 produtos e o admin, o que deixa a demonstração sempre previsível. Em um sistema real, o próximo passo seria um PostgreSQL gerenciado.
 
