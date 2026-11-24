@@ -1,0 +1,27 @@
+# Blueprint do Render (https://render.com) - deploy com 1 clique:
+# Dashboard -> New -> Blueprint -> selecione este repositório.
+services:
+  - type: web
+    name: api-rest-projeto-final
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      # Gerado pelo Render: um segredo aleatório que nunca aparece no código
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 1h
+      - key: ADMIN_EMAIL
+        value: admin@loja.com
+      # sync: false -> o Render pede a senha do admin na criação (não fica no repositório)
+      - key: ADMIN_SENHA
+        sync: false

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Testes automatizados (node:test + Supertest)
+        run: npm test
+
+      - name: Coleção Postman (Newman) contra a API rodando
+        env:
+          # valores apenas para o ambiente de CI (não são usados em produção)
+          JWT_SECRET: ci-somente-teste-segredo-com-mais-de-32-caracteres
+          ADMIN_EMAIL: admin@loja.com
+          ADMIN_SENHA: CiAdminSenha123
+          PORT: 3000
+        run: |
+          npm start &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/health && break; sleep 1; done
+          npm run test:api -- --env-var baseUrl=http://localhost:3000 --env-var adminSenha=$ADMIN_SENHA

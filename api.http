@@ -1,0 +1,80 @@
+### =====================================================================
+### API de Loja - Projeto Final (bônus: arquivo .http)
+### Abra no VS Code com a extensão "REST Client" (ou no IntelliJ) e clique em "Send Request".
+### A URL base já aponta para o deploy; para testar local, troque pela linha comentada.
+### =====================================================================
+@base = https://api-rest-projeto-final.onrender.com
+# @base = http://localhost:3000
+@adminSenha = coloque-aqui-a-ADMIN_SENHA
+
+### 0) Acordar a API (o plano gratuito "dorme" sem uso; a 1ª chamada pode levar ~1 min)
+GET {{base}}/health
+
+### 1) Cadastro (201)
+POST {{base}}/register
+Content-Type: application/json
+
+{ "nome": "Professor", "email": "professor@email.com", "senha": "SenhaForte123" }
+
+### 2) Login usuário comum (200) -> token salvo automaticamente
+# @name loginComum
+POST {{base}}/login
+Content-Type: application/json
+
+{ "email": "professor@email.com", "senha": "SenhaForte123" }
+
+### 3) Login admin (200)
+# @name loginAdmin
+POST {{base}}/login
+Content-Type: application/json
+
+{ "email": "admin@loja.com", "senha": "{{adminSenha}}" }
+
+@tokenComum = {{loginComum.response.body.token}}
+@tokenAdmin = {{loginAdmin.response.body.token}}
+
+### 4) Rota protegida com token (200)
+GET {{base}}/perfil
+Authorization: Bearer {{tokenComum}}
+
+### 5) Listagem paginada, filtrada e ordenada (200)
+GET {{base}}/produtos?page=1&limit=5&sort=preco&order=desc&categoria=eletronicos&minPrice=100&maxPrice=5000
+
+### 6) Criar produto como admin (201)
+POST {{base}}/produtos
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "sku": "PRF-001", "nome": "Produto do Professor", "categoria": "livros", "preco": 89.9, "estoque": 10 }
+
+### 7) Atualizar só o preço (PATCH, admin)
+PATCH {{base}}/produtos/151
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{ "preco": 79.9 }
+
+### ---------- ERROS ESPERADOS ----------
+
+### 401 - sem token
+GET {{base}}/perfil
+
+### 403 - usuário comum tentando excluir (somente admin)
+DELETE {{base}}/usuarios/1
+Authorization: Bearer {{tokenComum}}
+
+### 400 - dados inválidos
+POST {{base}}/register
+Content-Type: application/json
+
+{ "nome": "A", "email": "email-invalido", "senha": "123" }
+
+### 404 - produto inexistente
+GET {{base}}/produtos/999999
+
+### 422 - estoque insuficiente
+POST {{base}}/produtos/1/baixa-estoque
+Authorization: Bearer {{tokenComum}}
+Content-Type: application/json
+
+{ "quantidade": 999 }
